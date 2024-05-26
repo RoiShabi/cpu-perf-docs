@@ -6,7 +6,7 @@ If there is one thing we use as much as oxygen these days, is CPU. It is all aro
 
 ## CPU Main Components
 
-In general, CPU contains 3 components: Control Unit, ALU (Arithmetic Logic Unit), I/O interfaces.
+In general, CPU contains 4 components: Control Unit, ALU (Arithmetic Logic Unit), Registers, I/O interfaces.
 
 ### Control Unit
 
@@ -19,6 +19,10 @@ ALU is the unit doing the bitwise math operations. It adds, subtracts, XORs, NOT
 ### I/O Interfaces
 
 Those are units within the processor, which interact with main memory, other processors, hard disks, monitors and so on.
+
+### Registers
+
+Register file is memory a memory storage of data which is only relevant in the current context of the CPU, and they mostly hold data between following operations. Some registers hold the address of the current instruction, the address the top of the stack, and more.
 
 ## When Performance began to matter
 
