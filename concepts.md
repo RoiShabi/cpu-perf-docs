@@ -27,10 +27,10 @@ Instructions in the CPU are pipelined, each instruction have 5 phases:
 For each instruction those steps happens one by one, but for multiple instructions the operations happen in parallel.
 ```mermaid
 graph TD;
-    IF<N_operation> --> ID<(N-1)_operation>;
-    ID <(N-1) operation> --> EX <(N-2) operation>;
-    EX <(N-2) operation> --> MEM <(N-3) operation>;
-    MEM <(N-3) operation> --> WB <(N-4 operation)>;
+    A( IF < N operation> ) --> B( ID < N-1 operation> );
+    B --> C( EX < N-2 operation> );
+    C --> D( MEM < N-3 operation> );
+    D --> E( WB < N-4 operation> );
 ```
 
 When the chip's implementation is divided by steps, throughput can be increased up to 5 times the original throughput.
