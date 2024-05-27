@@ -1,5 +1,5 @@
 # cpu-perf-docs
-**Read Previous: [Problems Derived from Concepts](./problems-derived.md)**
+**Read Previous: [Intro](./README.md)**
 
 ## Performance Driven Concepts
 
