@@ -27,7 +27,7 @@ Instructions in the CPU are pipelined, each instruction have 5 phases:
 For each instruction those steps happens one by one, but for multiple instructions the operations happen in parallel.
 ```mermaid
 graph TD;
-    IF <N operation> --> ID <(N-1) operation>;
+    IF<N_operation> --> ID<(N-1)_operation>;
     ID <(N-1) operation> --> EX <(N-2) operation>;
     EX <(N-2) operation> --> MEM <(N-3) operation>;
     MEM <(N-3) operation> --> WB <(N-4 operation)>;
