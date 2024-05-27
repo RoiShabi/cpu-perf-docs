@@ -14,7 +14,7 @@ The control unit is the circuitry which translates machine code to electrical si
 
 #### ALU
 
-ALU is the unit doing the bitwise math operations. It adds, subtracts, XORs, NOTs etc.
+ALU is the unit doing the actual calculations like bitwise and numeric operations. It adds, subtracts, XORs, NOTs etc.
 
 #### I/O Interfaces
 
