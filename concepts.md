@@ -25,10 +25,12 @@ Instructions in the CPU are pipelined, each instruction have 5 phases:
 * WB = writeback
 
 For each instruction those steps happens one by one, but for multiple instructions the operations happen in parallel.
-
-IF [N operation] --> ID [(N-1) operation];
-ID [(N-1) operation] --> EX [(N-2) operation];
-EX [(N-2) operation] --> MEM [(N-3) operation];
-MEM [(N-3) operation] --> WB [(N-4 operation)];
+```mermaid
+graph TD;
+    IF [N operation] --> ID [(N-1) operation];
+    ID [(N-1) operation] --> EX [(N-2) operation];
+    EX [(N-2) operation] --> MEM [(N-3) operation];
+    MEM [(N-3) operation] --> WB [(N-4 operation)];
+```
 
 When the chip's implementation is divided by steps, throughput can be increased up to 5 times the original throughput.
