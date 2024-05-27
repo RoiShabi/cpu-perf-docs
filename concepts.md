@@ -25,6 +25,8 @@ Instructions in the CPU are pipelined, each instruction have 5 phases:
 * WB = writeback
 
 For each instruction those steps happens one by one, but for multiple instructions the operations happen in parallel.
+As seen here, when cpu starts processing the N<sup>th</sup> instruction, it flushes the N-4<sup>th</sup> operation:
+
 ```mermaid
 graph LR;
     A( IF < N instruction> ) --> B( ID < N-1 instruction> );
