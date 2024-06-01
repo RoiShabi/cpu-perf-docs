@@ -87,8 +87,8 @@ Now we shall simulate the code with t0=0 and t1=2:
 |4|(IV) jal zero, 12|(III) addi t2, t2, 1|(II) addi t0, t0, 1|(I) beq t0, t1, 16|NO WORK||
 |5|(V) addi t0, zero, 0|(IV) jal zero, 12|(III) addi t2, t2, 1|(II) addi t0, t0, 1|(I) beq t0, t1, 16||
 |6|(VI) addi t3, t3, 1|(V) addi t0, zero, 0|(IV) jal zero, 12|(III) addi t2, t2, 1|(II) addi t0, t0, 1||
-|7?|(VII) jal zero, -24|(VI) addi t3, t3, 1|??|(IV) jal zero, 12|(III) addi t2, t2, 1|Problem: The last step's jump caused a disruption in the instructions' flow.|
-|7|(VII) jal zero, -24|NO WORK|NO WORK|(IV) jal zero, 12|(III) addi t2, t2, 1|Instruction (VI) `addi t3, t3, 1` is not path of the flow anymore, so the jump's destination should be fetched and decoded before any execution can occur|
+|7|(VII) jal zero, -24|(VI) addi t3, t3, 1|(II) addi t0, t0, 1	|(IV) jal zero, 12|(III) addi t2, t2, 1|<span style="color: red">Problem: The last step's jump caused a disruption in the instructions' flow.</span>|
+|7(updated)|(VII) jal zero, -24|NO WORK|NO WORK|(IV) jal zero, 12|(III) addi t2, t2, 1|Instruction (VI) `addi t3, t3, 1` is not path of the flow anymore, so the jump's destination should be fetched and decoded before any execution can occur|
 |8|POST LOOP INSTRUCTIONS|(VII) jal zero, -24|NO WORK|NO WORK|(IV) jal zero, 12||
 
 As seen in the 7<sup>th</sup> clock, two operations are thrown to the trash, and it costs us 2 cycles. This happens again after instruction (VII). A change like this in the code flow is called **Control Hazard**. This kind of control hazard is common when and appear whenever calling methods in the code, or when using loop.
@@ -107,7 +107,7 @@ Let's continue with our little code simulation.
 |17|(I) beq t0, t1, 16|NO WORK|NO WORK|(VII) jal zero, -24|NO WORK||
 |18|(II) addi t0, t0, 1|(I) beq t0, t1, 16|NO WORK|NO WORK|NO WORK||
 |19|(III) addi t2, t2, 1|(II) addi t0, t0, 1|(I) beq t0, t1, 16|NO WORK|NO WORK||
-|20|(V) addi t0, zero, 0|NO WORK|NO WORK|NO WORK|NO WORK|Since the condition in the branch was true, the program jumps again|
+|20|(V) addi t0, zero, 0|NO WORK|NO WORK|NO WORK|NO WORK|<span style="color: red">Since the condition in the branch was true, the program jumps again</span>|
 |21|addi t3, t3, 1|(V) addi t0, zero, 0|NO WORK|NO WORK|NO WORK||
 
 As seen here, the branching of the code caused another **Control Hazard**. Branching often happen in programmers code as they use condition in their code.
