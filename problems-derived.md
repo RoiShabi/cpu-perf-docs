@@ -56,7 +56,10 @@ lw t0, 0(zero)
 addi t0, t0, 1
 sw t0, 0(zero)
 ```
-Here when `lw` instruction is executed, `addi` is decoded and `sw` is fetched. When applying this method we face some hazards. Those are: Control hazard, Data hazard, Structural hazard.
+Here when `lw` instruction is executed, `addi` is decoded and `sw` is fetched. When applying this method we face some hazards. Those are:
+* Control hazard
+* Data hazard
+* Structural hazard
 
 #### Control Hazard
 Now let's check one more example:
@@ -111,3 +114,7 @@ Let's continue with our little code simulation.
 |21|addi t3, t3, 1|(V) addi t0, zero, 0|NO WORK|NO WORK|NO WORK||
 
 As seen here, the branching of the code caused another **Control Hazard**. Branching often happen in programmers code as they use condition in their code.
+#### Data Hazard
+TODO
+#### Structural Hazard
+TODO
