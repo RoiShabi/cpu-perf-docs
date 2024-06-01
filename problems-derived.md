@@ -49,6 +49,37 @@ core_B -> sw t0, 0(zero) # **address 0x00** = 1
 ```
 \* Other things can happen to. It is not unpredictable by definition, but real life system are too complex. Real time processors and systems exist to solve similar issues, but it is beyond scope.
 
-### Branch Stalling
+### Pipeline Stalling
+In pipelined system, sequential instructions processed in different stages. It allows one to reduce execution time. Let's see the example discussed earlier.
+```
+lw t0, 0(zero)
+addi t0, t0, 1
+sw t0, 0(zero)
+```
+Here when `lw` instruction is executed, `addi` is decoded and `sw` is fetched. Now let's check one more example:
+```
+# This code is an infinite loop, in which t0 is incremented, until it reaches a trashhold (t1), then t0 is set to 0
 
-### Pipeline Suboptimal Utilization
+# Legend
+# t0: loop counter
+# t1: loop limit
+# t2: branch A counter
+# t3: branch B counter
+
+I  . beq t0, t1, 16     # if (t0 == t1) go to line 4
+II . addi t0, t0, 1     # BRANCH A: t0++
+III. addi t2, t2, 1     # BRANCH A: t2++
+IV . jal zero, 12       # BRANCH A: skip BRANCH B
+V  . addi t0, zero, 0   # BRANCH B: reset counter
+VI . addi t3, t3, 1     # BRANCH B: t3++
+VII. jal zero, -24      # go to loop's start
+```
+Now we shall simulate the code with t0=0 and t1=2:
+|Cycle No.|Instruction Fetch|Instruction Decode|Instruction Execute|Memory Access|Write Back|Comments|
+|---|---|---|---|---|---|---|
+|1|(I) beq t0, t1, 16|NO WORK|NO WORK|NO WORK|NO WORK||
+|2|(II) addi t0, t0, 1|(I) beq t0, t1, 16|NO WORK|NO WORK|NO WORK||
+|3|(III) addi t2, t2, 1|(II) addi t0, t0, 1|(I) beq t0, t1, 16|NO WORK|NO WORK||
+|4|(IV) jal zero, 12|(III) addi t2, t2, 1|(II) addi t0, t0, 1|(I) beq t0, t1, 16|NO WORK||
+|5|(V) addi t0, zero, 0|(IV) jal zero, 12|(III) addi t2, t2, 1|(II) addi t0, t0, 1|(I) beq t0, t1, 16||
+
