@@ -136,7 +136,7 @@ Now to the simulation:
 |2|(II) sw t0, 0(zero)|(I) xor t0, a0, a5|NO WORK|NO WORK|NO WORK|
 |3|(III) xor t1, a1, a5|(II) sw t0, 0(zero)|(I) xor t0, a0, a5|NO WORK|NO WORK|
 
-We already encounter a problem: on the Decode step, the value of register t0 is fetched when instruction (II) reach there (never talked about it, but this is what Decode step does). The value of t0 at this current cycle is not valid, since instruction (I) hasn't reached yet to Write-Back step (which is the step when values are being stored in registers).\
+We already encounter a problem: on the Decode step, the value of register t0 is fetched when instruction (II) reach there (never talked about it, but this is part of what Decode step does). The value of t0 at this current cycle is not valid, since instruction (I) hasn't reached yet to Write-Back step (which is the step when values are being stored in registers).\
 In other words, instruction (II) cannot be decoded until instruction (I) exits the pipeline. What looks like:
 |Cycle No.|Instruction Fetch|Instruction Decode|Instruction Execute|Memory Access|Write Back|
 |---|---|---|---|---|---|
@@ -150,4 +150,12 @@ In other words, instruction (II) cannot be decoded until instruction (I) exits t
 This caused us to waste 3 cycles, and it happens to any pair of xor-sw in our code.
 
 #### Structural Hazard
-TODO
+Structural Hazard problem is not a common one when talking about RISC architecture, and CISC too complex for now, so we will discuss it just a little. In general, structural hazard is whenever 2 instructions race over the same physical resource. The most common example is (and pretty much solved one):
+```asm
+I  . sw zero, 0(zero)
+II . addi t0, zero, 1
+III. addi t1, zero, 1
+IV . addi t3, zero, 1
+```
+
+The following code uses memory on the 4<sup>th</sup> step, which happens to be the Fetch step of the 4<sup>th</sup> step. The issue with that is that both of them access memory the same time, one for loading instruction and the second for writing data. In that case a stall of 1 cycle happen after any store or load instruction. The reason this problem is solved is that there is a global solution for this (specific instruction-memory race) problem: separate the port of the data and instructions, so they don't compete anymore over the same hardware.
