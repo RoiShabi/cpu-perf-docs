@@ -17,7 +17,7 @@ In multicore system, some cores might access the same data. Let's see an example
 
 ##### Desired Flow
 The flow we expect at first glance is:
-```
+```asm
 core_A -> lw t0, 0(zero) # t0 = 0\
 core_A -> addi t0, t0, 1 # t0 = 1\
 core_A -> sw t0, 0(zero) # **address 0x00** = 1
@@ -37,7 +37,7 @@ core_B -> sw t0, 0(zero) # **address 0x00** = 4
 
 #### In Practice
 As we know, the cores run in parallel, so the dont wait one for another to finish, so what can happen is:
-```
+```asm
 core_A -> lw t0, 0(zero) # t0 = 0\
 core_B -> lw t0, 0(zero) # t0 = 0
 
@@ -51,7 +51,7 @@ core_B -> sw t0, 0(zero) # **address 0x00** = 1
 
 ### Pipeline Stalling
 In pipelined system, sequential instructions processed in different stages. It allows one to reduce execution time. Let's see the example discussed earlier.
-```
+```asm
 lw t0, 0(zero)
 addi t0, t0, 1
 sw t0, 0(zero)
@@ -63,7 +63,7 @@ Here when `lw` instruction is executed, `addi` is decoded and `sw` is fetched. W
 
 #### Control Hazard
 Now let's check one more example:
-```
+```asm
 # This code is an infinite loop, in which t0 is incremented, until it reaches a trashhold (t1), then t0 is set to 0
 
 # Legend
@@ -145,6 +145,9 @@ In other words, instruction (II) cannot be decoded until instruction (I) exits t
 |3|(II) sw t0, 0(zero)|NO WORK|(I) xor t0, a0, a5|NO WORK|NO WORK|
 |4|(II) sw t0, 0(zero)|NO WORK|NO WORK|(I) xor t0, a0, a5|NO WORK|
 |5|(II) sw t0, 0(zero)|NO WORK|NO WORK|NO WORK|(I) xor t0, a0, a5|
+|6|(III) xor t1, a1, a5|(II) sw t0, 0(zero)|NO WORK|NO WORK|NO WORK|
+
+This caused us to waste 3 cycles, and it happens to any pair of xor-sw in our code.
 
 #### Structural Hazard
 TODO
