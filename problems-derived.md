@@ -115,6 +115,36 @@ Let's continue with our little code simulation.
 
 As seen here, the branching of the code caused another **Control Hazard**. Branching often happen in programmers code as they use condition in their code.
 #### Data Hazard
-TODO
+Data hazard is when an instruction depends on the previous operation. Let's have another example to explain the problem with that:
+```asm
+# The following code takes set of registers (a0-a3) and XORs them by a5 which is the XORs key, after the XOR operation the value is stored to memory
+
+I   . xor t0, a0, a5
+II  . sw t0, 0(zero)
+III . xor t1, a1, a5
+IV  . sw t1, 4(zero)
+V   . xor t2, a2, a5
+VI  . sw t2, 8(zero)
+VII . xor t3, a3, a5
+VIII. sw t3, 12(zero)
+```
+
+Now to the simulation:
+|Cycle No.|Instruction Fetch|Instruction Decode|Instruction Execute|Memory Access|Write Back|
+|---|---|---|---|---|---|
+|1|(I) xor t0, a0, a5|NO WORK|NO WORK|NO WORK|NO WORK|
+|2|(II) sw t0, 0(zero)|(I) xor t0, a0, a5|NO WORK|NO WORK|NO WORK|
+|3|(III) xor t1, a1, a5|(II) sw t0, 0(zero)|(I) xor t0, a0, a5|NO WORK|NO WORK|
+
+We already encounter a problem: on the Decode step, the value of register t0 is fetched when instruction (II) reach there (never talked about it, but this is what Decode step does). The value of t0 at this current cycle is not valid, since instruction (I) hasn't reached yet to Write-Back step (which is the step when values are being stored in registers).\
+In other words, instruction (II) cannot be decoded until instruction (I) exits the pipeline. What looks like:
+|Cycle No.|Instruction Fetch|Instruction Decode|Instruction Execute|Memory Access|Write Back|
+|---|---|---|---|---|---|
+|1|(I) xor t0, a0, a5|NO WORK|NO WORK|NO WORK|NO WORK|
+|2|(II) sw t0, 0(zero)|(I) xor t0, a0, a5|NO WORK|NO WORK|NO WORK|
+|3|(II) sw t0, 0(zero)|NO WORK|(I) xor t0, a0, a5|NO WORK|NO WORK|
+|4|(II) sw t0, 0(zero)|NO WORK|NO WORK|(I) xor t0, a0, a5|NO WORK|
+|5|(II) sw t0, 0(zero)|NO WORK|NO WORK|NO WORK|(I) xor t0, a0, a5|
+
 #### Structural Hazard
 TODO
