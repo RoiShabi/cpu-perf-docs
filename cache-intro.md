@@ -17,10 +17,10 @@ When memory is found in the cache it is called **Cache Hit**, if not it is calle
 #### Level 2
 This level is the fall back when the memory isn't exist in level 1. It is bigger, cheaper and slower than level 1, but still much faster than accessing main memory. It usually exists per core, costs around 10 cycles (more or less), and has capacity of few MB.
 #### Level 3
-This is the slowest, and biggest cache level. It is shared by all the cores of the processor (board with 2 processors or more, has L3 caches as the number of processors). L3 costs around tens-hundreds of cycles, which is still faster than main memory; It has capacity of 100 MB more or less.
+This is the slowest, and biggest cache level. It is shared by all the cores of the processor; For example motherboard with 2 quad-core processors (8 physical cores in total), has 2 banks of L3 cache. L3 costs around tens-hundreds of cycles, which is still faster than main memory; It has capacity of 100 MB more or less.
 
 #### What Else
 Some other facts about cache memory you should know:
 * It contains both data and instructions, they are usually stored in different segments
-* The is separate to cache lines, which are the units of which memory is stored in cache. For example, cache line in 64-bit ARM processor would be 64 bytes.
-* As for developers (and also compilers), writing fragmented instructions (code) or data may harm performance significantly.
+* The cache is separated to cache lines, which are the smallest units of which memory is stored in cache. For example, cache line in 64-bit ARM processor would be 64 bytes.
+* As for developers (and also compilers), writing fragmented instructions-flow (code) or data may harm performance significantly.
