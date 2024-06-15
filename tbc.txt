@@ -5,6 +5,7 @@ cacheing
     coherency & protocols
     atomics
     prefetch
+    line alignment
 different ALUs
     cisc
 reorder
