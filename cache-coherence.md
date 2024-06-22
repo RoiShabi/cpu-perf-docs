@@ -8,8 +8,8 @@ bool is_running = false;
 
 # thread_A
 int seconds = 0;
-while(is_running){
-    this_thread::sleep(seconds(1));
+while(is_running){ // keep running until signal received from thread_B
+    this_thread::sleep(seconds(1)); // sleep for second
     ++seconds;
     printf("%d seconds passed from the beginning\n", seconds);
 }
@@ -17,20 +17,21 @@ while(is_running){
 # thread_B
 string input;
 do{
-    getline(cin, input);
-}while (input=="exit")
-is_running = false;
+    getline(cin, input); // read user input
+}while (input=="exit") // keep looping until "exit" input
+is_running = false; // signal thread_A to stop
 ```
 \* In our example we assume `printf` and `getline` don't cause context-switch and OS code. This is for keeping the example simple and informative
-We examine what suppose to happen:
+
+We examine what suppose to happen, the starting point for our simulation:
 * from thread_A perspective:
-  * is_running is in cache, value is false
-  * seconds is in cache, value is 8 (arbitrary number)
+  * `is_running` is in cache, value is false
+  * `seconds` is in cache, value is 8 (arbitrary number)
 * from thread_B perspective:
   * user keeps inserting inputs as long as "exit" is not provided
 
-In our simulated situation:
-1. thread_B is receiving now the "exit" input
+<ins>Flow of events in our simulated situation:</ind>
+1. thread_B is receiving the "exit" input
 2. thread_B is writing false to cache memory which is mapped to `is_running` address
 3. thread_A is loading the value of is_running, from **cache** to register
 4. thread_B reads the value, which is **still false** 
