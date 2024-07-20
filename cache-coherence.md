@@ -63,3 +63,19 @@ We have 3 questions to answer before deciding what protocol to use.
 * ANSWER:
   * Write-Invalidate - Readers of updated memory are notified their cached data is no longer valid, means whenever they want to access these address they need to reload from main memory
   * Write-Update - Readers are updated their cached memory is not updated, and they receive the new updated value so they can change it without accessing main memory.
+
+### External Sources
+Any combination of answers can lead us to different protocol. There are some known protocols like: Berkeley protocol, Synapse protocol, etc.
+Those protocols are classified by the memory states they support: **M**odified, **E**xclusive, **O**wner, **S**hared, **I**nvalid. The classes are:
+* SI - Shared, Invalid
+* MSI - Modified, Shared, Invalid
+* MEI - Modified, Exclusive, Invalid
+* MES - Modified, Exclusive, Shared
+* MESI - Modified, Exclusive, Shared, Invalid
+* MOSI - Modified, Owned, Shared, Invalid
+* MEOSI - Modified, Exclusive, Owned, Shared, Invalid
+
+How they work and which one is better in what scenario is out of this scope (at least for now), but it is recommended to read more about them.
+Some external materials:
+* https://people.eecs.berkeley.edu/~pattrsn/252F96/Lecture18.pdf
+* https://en.wikipedia.org/wiki/Cache_coherency_protocols_(examples)
