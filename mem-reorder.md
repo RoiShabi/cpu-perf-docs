@@ -69,4 +69,6 @@ void fill_zero(int *arr, int size, int *external_index)
 
 }
 ```
-Now, the new code does not update the memory after each t0 operation, but only at the end of the method.
+Now, the new code does not update the memory after each `t0` operation, but only at the end of the method.
+
+**Read Next:[Memory Model](./mem-model.md.md)**
