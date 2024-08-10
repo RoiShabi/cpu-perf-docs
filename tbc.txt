@@ -3,11 +3,12 @@ List of all the things I need to write about:
 branch prediction
 cacheing
     coherency & protocols
-    atomics
     prefetch
 different ALUs
     cisc
 reorder
+    consistency models
+atomics
 vector instruction
 big.LITTLE
 
