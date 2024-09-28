@@ -2,7 +2,7 @@
 **Read Previous:[Performance Driven Concepts](./concepts.md)**
 ## What is Memory Reordering
 
-Programs use data all the time. In fact, most of program's instructions are either data access (read/write), or data manipulation (calculations/bitwise ops). \When compiling, your code isn't translated to assembly. Another code, with equivalent results, is translated to assembly. As Herb Sutter (has amazing lectures online) said, in the name of your compiler/processor/cache:
+Programs use data all the time. In fact, most of program's instructions are either data access (read/write), or data manipulation (calculations/bitwise ops). When compiling, your code isn't translated to assembly. Another code, with equivalent results, is translated to assembly. As Herb Sutter (has amazing lectures online) said, in the name of your compiler/processor/cache:
 > "No, it's much better to **execute a different program**. Hey, don't complain. It's for your own good. You really wouldn't want to execute that *dreck* you actually wrote."
 
 
@@ -57,7 +57,7 @@ void fill_zero(int *arr, int size, int *external_index)
     lw t0 0(external_index); //load external_index to the temp register
     //assembly end
 
-    for(; *t0 < size; t0++)
+    for(; t0 < size; t0++)
     {
         arr[t0] = 0;
     }
@@ -71,4 +71,4 @@ void fill_zero(int *arr, int size, int *external_index)
 ```
 Now, the new code does not update the memory after each `t0` operation, but only at the end of the method.
 
-**Read Next:[Memory Model](./mem-model.md.md)**
+**Read Next:[Memory Model](./mem-model.md)**
