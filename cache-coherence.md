@@ -4,7 +4,7 @@
 Cache is a solution for a problem at any core count, but when mixing multicore system, some complications emerge.\
 Let's examine the following code to illustrate the issue with cache as presented earlier:
 ``` c++
-bool is_running = false;
+bool is_running = true;
 
 # thread_A
 int seconds = 0;
