@@ -49,7 +49,7 @@ The 3 memory models we are going to talk about are:
 Usualy people start explaining from Sequential Consistency, but we will do the opposite so it will be more clear.
 
 ### Relaxed Ordering
-Operations exists in an undetermine order of execution. This is what actually happen to your code when you dont use synchronization directives (usually atomics, we will discuss them later). It means that the order of execution may vary to the extend of the current thread's observation.
+Operations are executed at fully flexible order. This is what actually happen to your code when you dont use synchronization directives (usually atomics, we will discuss them later). It means that the order of execution may vary to the extend of the current thread's observation, in other words, as long as from single-theraded prespective the functionality is OK.
 ```c++
 struct point{int x; int y;};
 
