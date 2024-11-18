@@ -2,7 +2,7 @@
 **Read Previous: [Cache Coherence](./cache-coherence.md)**
 ## What is Memory Reordering
 
-Programs use data all the time. In fact, most of program's instructions are either data access (read/write), or data manipulation (calculations/bitwise ops). When compiling, your code isn't translated to assembly. Another code, with equivalent results, is translated to assembly. As Herb Sutter (has amazing lectures online) said, in the name of your compiler/processor/cache:
+Programs use data all the time. In fact, most of program's instructions are either data access (read/write), or data manipulation (calculations/bitwise ops). When compiling, your code isn't translated to assembly. Another code, with equivalent results, is translated to assembly. As Herb Sutter (on one of his amazing lectures) said, in the name of your compiler/processor/cache:
 > "No, it's much better to **execute a different program**. Hey, don't complain. It's for your own good. You really wouldn't want to execute that *dreck* you actually wrote."
 
 
@@ -25,7 +25,7 @@ void fill_2_arrays(int *arr1, int *arr2, int size_of_arrs)
 }
 ```
 
-In this code, 90% of the instructions (compare, i++, jump to loop beginning), are not the actual operation. Most of the compilers can merge the loops to 1 loop:
+In this code, 90% of the instructions (compare, i++, jump to loop beginning), are not the assignment itself. Most of the compilers can merge the loops to 1 loop:
 ```C
 void fill_2_arrays(int *arr1, int *arr2, int size_of_arrs)
 {
@@ -47,8 +47,8 @@ void fill_zero(int *arr, int size, int *external_index)
     }
 }
 ```
-This code is very expansive, because we request accessing `external_index` a lot. \
-What can the compiler do? It can replace `external_index` with CPU register, like that
+This code is very expansive, because we interact with the memory address of `external_index` a lot.
+What can a compiler do? It can replace `external_index` with CPU register, like that
 ```C
 void fill_zero(int *arr, int size, int *external_index)
 {

@@ -1,5 +1,5 @@
 # cpu-perf-docs
-**Read Previous:[Caching (intro)](./cache-intro.md)**
+**Read Previous: [Caching (intro)](./cache-intro.md)**
 ## Cache Coherence
 Cache is a solution for a problem at any core count, but when mixing multicore system, some complications emerge.\
 Let's examine the following code to illustrate the issue with cache as presented earlier:

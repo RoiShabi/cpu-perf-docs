@@ -1,5 +1,5 @@
 # cpu-perf-docs
-**Read Previous:[Memory Reordering](./mem-reorder.md)**
+**Read Previous: [Memory Reordering](./mem-reorder.md)**
 ## Memory Model
 ### The Need for memory model
 In previous chapter we talked about reordering, and why it can be useful. The problem with reordering, is that it can damage the functionality.\
@@ -88,7 +88,7 @@ int main()
 In the folloing example, the intuitive result is, `PrintTriangleThread()` waits until `is_ready` is true, and then prints the triangle which is already filled. It reality, this may not be the result. The order of execution can alter in a way that `PrintTriangleThread()` prints the Triangle before checking the flag, or `GenerateObjectThread()` sets the flag before writing data to the `global_triangle`. As long as one of the alterations occur, the result would be invalid object printed to the screen.
 
 ### Sequential Consistency
-Sequential consistency means, code executes operations in the same order they appear in the code. This may sounds obvious, bur after learning about Relaxed ordering, we can understand why it is needed. Imagine we have sequential consistent compiler, and very primitive CPU, the code from previuos section, would never drow an invalid triangle. Of course no modern processor / compiler is strict enough for assumptions like that to be acceptable, so programming languages provides us mechanisms to specify for some operations to be sequential consistent (we will explore them later).
+Sequential consistency means, code executes operations in the same order they appear in the code. This may sounds obvious, but after learning about Relaxed ordering, we can understand why it is needed. Imagine we have sequential consistent compiler, and very primitive CPU, the code from previuos section, would never drow an invalid triangle. Of course no modern processor / compiler is strict enough for assumptions like that to be acceptable, so programming languages provides us mechanisms to specify for some operations to be sequential consistent (we will explore them on later chapters).
 
 ### Acquire Release Ordering
 Acquire Release model helps us achiving more determined code then Relaxed ordering, while still allowing the processor/compiler to have more freedom then Sequential Consistency. Acquire-Relaese appears in pairs, and they say that:
@@ -145,11 +145,11 @@ void ObserveFlagsThread()
     while(global_triangle.first == default_point); //we exit the loop only after thread 1 started working
     bool copy_thread1_running = is_thread1_running;
     if(is_ready == false) //indicates the tread still working
-        asseert(copy_thread1_running);
+        assert(copy_thread1_running);
 }
 ```
 
-According to basic logic, if the thread passes the `while`, and `is_ready` has not been set yet, the value of `copy_thread1_running` should always be true. When dealing with Acquire-Release, it is not always true, and the code might fail the assertion. The reason it may fail is, that even if the ORDER_ACQUIRE forced `is_thread1_running` to be set to true before, `is_ready` is set to true, the line `is_thread1_running = false` at the end of the method, can accur before the ORDER_RELEASE happen. Worth mentioning, the opposite can happen on ORDER_ACQUIRE, meaning `is_thread2_running = true` can happen after the loop of thread 2 and not before.
+According to basic logic, if the thread passes the `while`, and `is_ready` has not been set yet, the value of `copy_thread1_running` should always be true. When dealing with Acquire-Release, it is not always true, and the code might fail the assertion. The reason it may fail is, that even if the ORDER_RELEASE forced `is_thread1_running` to be set to true before, `is_ready` is set to true, the line `is_thread1_running = false` at the end of the method, can accur before the ORDER_RELEASE happen. Worth mentioning, the opposite can happen on ORDER_ACQUIRE, meaning `is_thread2_running = true` can happen after the loop of thread 2 and not before.
 
 ### Sum Up
 All those methods, may be relevant in your programming, as the synchronization method depends on what do you try to achive. Those models come in use when working with atomics, which are the next topic.
