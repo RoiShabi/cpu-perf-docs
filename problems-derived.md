@@ -1,5 +1,5 @@
 # cpu-perf-docs
-**Read Previous:[Performance Driven Concepts](./concepts.md)**
+**Read Previous: [Performance Driven Concepts](./concepts.md)**
 ## Problems Derived from Concepts
 
 In previous chapter we talked about techniques used to improve performance. They really improve performance significantly, but they also introduce new problems. Let's talk about them.
@@ -159,3 +159,5 @@ IV . addi t3, zero, 1
 ```
 
 The following code uses memory on the 4<sup>th</sup> step, which happens to be the Fetch step of the 4<sup>th</sup> step. The issue with that is that both of them access memory the same time, one for loading instruction and the second for writing data. In that case a stall of 1 cycle happen after any store or load instruction. The reason this problem is solved is that there is a global solution for this (specific instruction-memory race) problem: separate the port of the data and instructions, so they don't compete anymore over the same hardware.
+
+**Read Next: [Caching (intro)](./cache-intro.md)**

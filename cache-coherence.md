@@ -1,5 +1,5 @@
 # cpu-perf-docs
-**Read Previous:[Caching (intro)](./cache-intro.md)**
+**Read Previous: [Caching (intro)](./cache-intro.md)**
 ## Cache Coherence
 Cache is a solution for a problem at any core count, but when mixing multicore system, some complications emerge.\
 Let's examine the following code to illustrate the issue with cache as presented earlier:
@@ -79,3 +79,5 @@ How they work and which one is better in what scenario is out of this scope (at 
 Some external materials:
 * https://people.eecs.berkeley.edu/~pattrsn/252F96/Lecture18.pdf
 * https://en.wikipedia.org/wiki/Cache_coherency_protocols_(examples)
+
+**Read Next: [Memory Reordering](./mem-reorder.md)**

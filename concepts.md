@@ -40,4 +40,4 @@ graph LR;
 
 When the chip's implementation is divided by steps, throughput can be increased up to 5 times the original throughput.
 
-**Read Next:[Problems Derived from Concepts](./problems-derived.md)**
+**Read Next: [Problems Derived from Concepts](./problems-derived.md)**
