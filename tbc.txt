@@ -4,6 +4,7 @@ branch prediction
 cacheing
     coherency & protocols
     prefetch
+    line alignment
 different ALUs
     cisc
 reorder
