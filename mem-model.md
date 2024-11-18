@@ -154,4 +154,4 @@ According to basic logic, if the thread passes the `while`, and `is_ready` has n
 ### Sum Up
 All those methods, may be relevant in your programming, as the synchronization method depends on what do you try to achive. Those models come in use when working with atomics, which are the next topic.
 
-**Read Next:[Atomic Operations](./atomics.md)**
+**Read Next: [Atomic Operations](./atomics.md)**

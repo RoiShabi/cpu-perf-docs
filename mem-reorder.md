@@ -1,5 +1,5 @@
 # cpu-perf-docs
-**Read Previous:[Performance Driven Concepts](./concepts.md)**
+**Read Previous: [Cache Coherence](./cache-coherence.md)**
 ## What is Memory Reordering
 
 Programs use data all the time. In fact, most of program's instructions are either data access (read/write), or data manipulation (calculations/bitwise ops). When compiling, your code isn't translated to assembly. Another code, with equivalent results, is translated to assembly. As Herb Sutter (has amazing lectures online) said, in the name of your compiler/processor/cache:
@@ -71,4 +71,4 @@ void fill_zero(int *arr, int size, int *external_index)
 ```
 Now, the new code does not update the memory after each `t0` operation, but only at the end of the method.
 
-**Read Next:[Memory Model](./mem-model.md)**
+**Read Next: [Memory Model](./mem-model.md)**

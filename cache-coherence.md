@@ -79,3 +79,5 @@ How they work and which one is better in what scenario is out of this scope (at 
 Some external materials:
 * https://people.eecs.berkeley.edu/~pattrsn/252F96/Lecture18.pdf
 * https://en.wikipedia.org/wiki/Cache_coherency_protocols_(examples)
+
+**Read Next: [Memory Reordering](./mem-reorder.md)**

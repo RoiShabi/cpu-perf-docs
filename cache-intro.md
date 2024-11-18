@@ -1,5 +1,5 @@
 # cpu-perf-docs
-**Read Previous:[Problems Derived from Concepts](./problems-derived.md)**
+**Read Previous: [Problems Derived from Concepts](./problems-derived.md)**
 ## Caching (intro)
 Today we are issuing problem whose source is not the processor, but external hardware; which is the RAM.
 
@@ -25,4 +25,4 @@ Some other facts about cache memory you should know:
 * The cache is separated to cache lines, which are the smallest units of which memory is stored in cache. For example, cache line in 64-bit ARM processor would be 64 bytes.
 * As for developers (and also compilers), writing fragmented instructions-flow (code) or data may harm performance significantly.
 
-**Read Next:[Cache Coherence](./cache-coherence.md)**
+**Read Next: [Cache Coherence](./cache-coherence.md)**
