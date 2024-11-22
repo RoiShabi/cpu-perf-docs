@@ -47,9 +47,55 @@ As can be seen, even after 2 threads increased `global_counter` by 1, it's value
 
 ##### Example 2
 ```C++
+std::string generate_random_str();
+void hardware_custom_print(std::string* strings_array, int count);
+
 constexpr size_t SIZE = 100;
 std::string print_buffer[SIZE];
-bool buffer_lock = false;
+bool is_buffer_locked = false;
+size_t next_free_index = 0;
 
 // TODO: 2 threads write and one read and print, need for atomic lock-flag
+void insertion_work()
+{
+    while(true)
+    {
+        std::string new_str = generate_random_str();
+        while(is_buffer_locked) ; // Spinlock until no one uses the buffer
+        is_buffer_locked = true; // Before proceeding, acquire the lock
+
+        print_buffer[next_free_index] = new_str;
+        ++next_free_index;
+
+        is_buffer_locked = false; // Release the lock
+    }
+}
+
+void print_work()
+{
+    while(true)
+    {
+        while(is_buffer_locked) ; // Spinlock until no one uses the buffer
+        is_buffer_locked = true; // Before proceeding, acquire the lock
+        
+        // create local copy for releasing the lock as soon as possible
+        std::string local_array_copy[SIZE];
+        memcpy(local_array_copy, 0, print_buffer, 0, sizeof(std::string)*next_free_index)
+        int local_array_length = next_free_index;
+
+        is_buffer_locked = false; // Release the lock
+
+        hardware_custom_print(local_array_copy, local_array_length);
+    }
+}
+
+int main()
+{
+    jthread writer1(insertion_work);
+    jthread writer2(insertion_work);
+    jthread reader(printer);
+    writer1.join();
+    writer2.join();
+    reader.join();
+}
 ```
