@@ -6,6 +6,7 @@ Atomic Operations, also known as 'atomics', are operations which were born for t
 ### Atomic Instructions
 #### Atomic Instructions - Why?
 We are already familliar with some CPU instructions, like load & store, add, xor. A race condition might occur when using them to communicate between threads. In the following 2 examples we are going to see real world scenarios where threads may corrupt each other by racing on the same resource.
+> In the examples, we use OOS instruction to describe instruction Out Of Scope instruction/value, meaning the code is before, or after, the scope of the assembly
 
 ##### Example 1
 In the next example, 2 threads are going to run the `print_until_limit()` method. The expected result is, 2 threads print the string for total amount of `limit' lines
@@ -38,11 +39,11 @@ This code results unexpected behaviour. That is, because of two reasons:
 The issue is, since both threads accessing `global_counter` resource without synchronization, one can depend on value which is not updated. Lets simulate a scenario:
 |Timepoint|Thread1 Instruction|Thread1 t0(register)|Thread2 Instruction|Thread2 t0(register)|global_counter|
 |--|--|--|--|--|--|
-|0|ld t0 `global_counter`|UNDEFINED (uinitialized)|UNDEFINED(not loaded yet)|UNDEFINED(uinitialized)|0|
+|0|ld t0 `global_counter`|OOS (uinitialized)|OOS(not loaded yet)|OOS(uinitialized)|0|
 |1|addi t0 t0 1|0|ld t0 `global_counter`|0|0|
 |2|sw t0 `global_counter`|1|addi t0 t0 1|0|0|
-|3|UNDEFINED (between iterations)|1|sw t0 `global_counter`|1|1|
-|4|UNDEFINED (between iterations)|1|UNDEFINED (between iterations)|1|1|
+|3|OOS (between iterations)|1|sw t0 `global_counter`|1|1|
+|4|OOS (between iterations)|1|OOS (between iterations)|1|1|
 
 As can be seen, even after 2 threads increased `global_counter` by 1, it's value is not 2, but only 1.
 
@@ -122,16 +123,16 @@ The problem in this example, like the previous one, is that the operation of rea
 
 |Timepoint|writer1 instruction|writer2 instruction|is_buffer_locked|
 |--|--|--|--|
-|0|`jmp WHILE_LABEL`|UNDEFINED|0 (false)|
-|1|`ld t0 is_buffer_locked`|UNDEFINED|0 (false)|
+|0|`jmp WHILE_LABEL`|OOS|0 (false)|
+|1|`ld t0 is_buffer_locked`|OOS|0 (false)|
 |2|`cmp t0 zero`|`jmp WHILE_LABEL`|0 (false)|
 |3|`addi t0 zero 1`|`ld t0 is_buffer_locked`|0 (false)|
 |4|`sw t0 is_buffer_locked`|`cmp t0 zero`|0 (false)|
-|5|UNDEFINED (in critical section)|`cmp t0 0`|1 (false)|
-|6|UNDEFINED (in critical section)|`addi t0 zero 1`|1 (false)|
-|7|UNDEFINED (in critical section)|`sw t0 is_buffer_locked`|1 (false)|
+|5|OOS (in critical section)|`cmp t0 0`|1 (false)|
+|6|OOS (in critical section)|`addi t0 zero 1`|1 (false)|
+|7|OOS (in critical section)|`sw t0 is_buffer_locked`|1 (false)|
 
-In this simulation, we can see both threads enters the critical section, because the `ld` and `sw` instruction are seperated to several instructions. Other scenarios can occure when involving the reader thread.
+In this simulation, we can see both threads enters the critical section, because the `ld` and `sw` instruction are seperated to several instructions. Other scenarios can occur when involving the reader thread.
 
 ##### Why? - Conclusion
 We saw what happens when 2 threads races over the same resource (This problem might even get more complex when taking context-switch into consideration). CPUs provides solution for this problem, which is the atomic instructions.
