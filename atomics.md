@@ -46,6 +46,8 @@ The issue is, since both threads accessing `global_counter` resource without syn
 As can be seen, even after 2 threads increased `global_counter` by 1, it's value is not 2, but only 1.
 
 ##### Example 2
+The next example shows a scenario of writing strings to custom monitor. `hardware_custom_print(std::string*, int)` method write to the monitor, but the writing is not thread safe, so we create single thread to call the method. Another 2 threads prepare data to print, and write it to a shared strings-array. In order to prevent 2 threads writing at the same time to the array, we use synchronization flag which every thread acquire before writing to the array.
+
 ```C++
 std::string generate_random_str();
 void hardware_custom_print(std::string* strings_array, int count);
@@ -80,8 +82,9 @@ void print_work()
         
         // create local copy for releasing the lock as soon as possible
         std::string local_array_copy[SIZE];
-        memcpy(local_array_copy, 0, print_buffer, 0, sizeof(std::string)*next_free_index)
+        memcpy(local_array_copy, 0, print_buffer, 0, sizeof(std::string)*next_free_index);
         int local_array_length = next_free_index;
+        next_free_index = 0;
 
         is_buffer_locked = false; // Release the lock
 
@@ -91,11 +94,20 @@ void print_work()
 
 int main()
 {
-    jthread writer1(insertion_work);
-    jthread writer2(insertion_work);
-    jthread reader(printer);
-    writer1.join();
+    std::jthread reader(printer);
+    std::jthread writer1(insertion_work);
+    std::jthread writer2(insertion_work);
     writer2.join();
+    writer1.join();
     reader.join();
 }
 ```
+
+For the following explaination, 
+
+The problem in this example, like the previous one, is that the operation of reading the lock's value, and setting it to true, are devided to 2 different operation. Lets simulate an edge case (which is not so edgy) to demonstrate why this code is broken.
+
+|Timepoint|reader C++ line|writer1 instruction|writer2 instruction|is_buffer_locked|
+|--|--|--|--|--|
+|0|`int local_array_length = next_free_index;`|`ld t0 is_buffer_locked`|`jmp WHILE_LABEL`|true|
+|1|`int local_array_length = next_free_index;`|`while(is_buffer_locked);`|`while(is_buffer_locked);`|true|
