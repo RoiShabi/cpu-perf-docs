@@ -39,7 +39,7 @@ This code results unexpected behaviour. That is, because of two reasons:
 The issue is, since both threads accessing `global_counter` resource without synchronization, one can depend on value which is not updated. Lets simulate a scenario:
 |Timepoint|Thread1 Instruction|Thread1 t0(register)|Thread2 Instruction|Thread2 t0(register)|global_counter|
 |--|--|--|--|--|--|
-|0|ld t0 `global_counter`|OOS (uinitialized)|OOS(not loaded yet)|OOS(uinitialized)|0|
+|0|ld t0 `global_counter`|OOS (uinitialized)|OOS (not loaded yet)|OOS (uinitialized)|0|
 |1|addi t0 t0 1|0|ld t0 `global_counter`|0|0|
 |2|sw t0 `global_counter`|1|addi t0 t0 1|0|0|
 |3|OOS (between iterations)|1|sw t0 `global_counter`|1|1|
@@ -123,14 +123,14 @@ The problem in this example, like the previous one, is that the operation of rea
 
 |Timepoint|writer1 instruction|writer2 instruction|is_buffer_locked|
 |--|--|--|--|
-|0|`jmp WHILE_LABEL`|OOS|0 (false)|
-|1|`ld t0 is_buffer_locked`|OOS|0 (false)|
+|0|`jmp WHILE_LABEL`|OOS (not loaded yet)|0 (false)|
+|1|`ld t0 is_buffer_locked`|OOS (not loaded yet)|0 (false)|
 |2|`cmp t0 zero`|`jmp WHILE_LABEL`|0 (false)|
 |3|`addi t0 zero 1`|`ld t0 is_buffer_locked`|0 (false)|
 |4|`sw t0 is_buffer_locked`|`cmp t0 zero`|0 (false)|
-|5|OOS (in critical section)|`cmp t0 0`|1 (false)|
-|6|OOS (in critical section)|`addi t0 zero 1`|1 (false)|
-|7|OOS (in critical section)|`sw t0 is_buffer_locked`|1 (false)|
+|5|OOS (in critical section)|`cmp t0 0`|1 (true)|
+|6|OOS (in critical section)|`addi t0 zero 1`|1 (true)|
+|7|OOS (in critical section)|`sw t0 is_buffer_locked`|1 (true)|
 
 In this simulation, we can see both threads enters the critical section, because the `ld` and `sw` instruction are seperated to several instructions. Other scenarios can occur when involving the reader thread.
 
