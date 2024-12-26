@@ -132,14 +132,17 @@ The problem in this example, like the previous one, is that the operation of rea
 |6|OOS (in critical section)|`addi t0 zero 1`|1 (true)|
 |7|OOS (in critical section)|`sw t0 is_buffer_locked`|1 (true)|
 
-In this simulation, we can see both threads enters the critical section, because the `ld` and `sw` instruction are seperated to several instructions. Other scenarios can occur when involving the reader thread.
+In this simulation, we can see both threads enters the critical section, because the `ld` and `sw` instruction are separated to several instructions. Other scenarios can occur when involving the reader thread.
 
 ##### Why? - Conclusion
 We saw what happens when 2 threads races over the same resource (This problem might even get more complex when taking context-switch into consideration). CPUs provides solution for this problem, which is the atomic instructions.
 
-#### Atomic insttruction - What?
+#### Atomic instruction - What?
 Atomic instructions are single instructions which does: Read-Modify-Write (RMW). This tool allow programs to access shared resource, without fearing for other thread's intervention. We shall clasify atomic operations to categories.
 
 ##### Arithmetic & Bitwise RMW
+Some example operations are:
+- `fetch_add` = reads memory, adds a value to that memory and write it back, it also returns the old value. Common in counters.
+- `fetch_xor` = flags, xor as bit toggle TODO: explain
 
 ##### Conditional RMW
