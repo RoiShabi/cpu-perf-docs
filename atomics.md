@@ -1,11 +1,11 @@
 # cpu-perf-docs
 **Read Previous: [Memory Models](./mem-model.md)**
 ## Atomics
-Atomic Operations, also known as 'atomics', are operations which were born for the purpose of threads' communication. Atomcis provide decisive (find better word) memory accesses in order to keep the code's functionallity the same as the programmer intended. In order to do so, atomics harness 3 mechanisms: cache coherency, memory ordering directives, atomic instructions. In order to understand how does it work, we first need to understand the missing part we have not talked about yet - atomic instructions.
+Atomic Operations, also known as 'atomics', are operations which were born for the purpose of threads' communication. Atomcis provide decisive (find better word) memory accesses in order to keep the code's functionality the same as the programmer intended. In order to do so, atomics harness 3 mechanisms: cache coherency, memory ordering directives, atomic instructions. In order to understand how does it work, we first need to understand the missing part we have not talked about yet - atomic instructions.
 
 ### Atomic Instructions
 #### Atomic Instructions - Why?
-We are already familliar with some CPU instructions, like load & store, add, xor. A race condition might occur when using them to communicate between threads. In the following 2 examples we are going to see real world scenarios where threads may corrupt each other by racing on the same resource.
+We are already familiar with some CPU instructions, like load & store, add, xor. A race condition might occur when using them to communicate between threads. In the following 2 examples we are going to see real world scenarios where threads may corrupt each other by racing on the same resource.
 > In the examples, we use OOS instruction to describe instruction Out Of Scope instruction/value, meaning the code is before, or after, the scope of the assembly
 
 ##### Example 1
@@ -32,7 +32,7 @@ int main()
 }
 ```
 
-This code results unexpected behaviour. That is, because of two reasons:
+This code results unexpected behavior. That is, because of two reasons:
 1. The access of `global_counter` in the the while loop -> The expectation of `global_counter` to be the same from the loop to the incrementation line 
 2. The line `++global_counter` -> It is translated to 3 instruction - load, add, store
 
@@ -172,3 +172,5 @@ void compare_and_swap(int* destination_ptr, int* accumulator_register, int new_v
 - LL/SC (load-linked/store-conditional) = It is separation of 2 instruction, `ll` loads memory and toggle the state of the memory address, `sc` stores value to new the address as long as there was no change from the `ll`.
 
 Both operations des not appear on the same processor since they are just different implementations the same ideal. LL/SC follow RISC methodology, while CAS follows CISC methodology.
+
+**Read Next: [Compare Exchange operations](./atomic-compare-exchange)**
