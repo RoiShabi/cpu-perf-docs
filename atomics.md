@@ -173,4 +173,4 @@ void compare_and_swap(int* destination_ptr, int* accumulator_register, int new_v
 
 Both operations des not appear on the same processor since they are just different implementations the same ideal. LL/SC follow RISC methodology, while CAS follows CISC methodology.
 
-**Read Next: [Compare Exchange operations](./atomic-compare-exchange)**
+**Read Next: [Compare Exchange operations](./atomic-compare-exchange.md)**
