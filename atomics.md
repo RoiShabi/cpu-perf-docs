@@ -105,7 +105,7 @@ int main()
 }
 ```
 
-For the following explaination, lets see a simple assembly representation for writer's loop content:
+For the following explanation, lets see a simple assembly representation for writer's loop content:
 ```asm
 WHILE_LABEL:
 ld t0 is_buffer_locked
@@ -119,7 +119,7 @@ sw t0 is_buffer_locked  // write true to is_buffer_locked
 jmp WHILE_LABEL
 ``` 
 
-The problem in this example, like the previous one, is that the operation of reading the lock's value, and setting it to true, are devided to 2 different operation. Lets simulate an edge case (which is not so edgy) to demonstrate why this code is broken (for simplification, we ignore the reader's thread).
+The problem in this example, like the previous one, is that the operation of reading the lock's value, and setting it to true, are divided to 2 different operation. Lets simulate an edge case (which is not so edgy) to demonstrate why this code is broken (for simplification, we ignore the reader's thread).
 
 |Timepoint|writer1 instruction|writer2 instruction|is_buffer_locked|
 |--|--|--|--|
@@ -146,3 +146,29 @@ Some example operations are:
 - `fetch_xor` = flags, xor as bit toggle TODO: explain
 
 ##### Conditional RMW
+Some example operations are:
+- CAS (compare and swap) = reads memory, if value is as expected, writes the new value, else save the actual value to register, it returns whether the operation succeeded or not. It works like the following pseudo code (on x86 ):
+```C
+void compare_and_swap(int* destination_ptr, int* accumulator_register, int new_value)
+{
+    // Now accumulator_register holds the expected value
+    ATOMIC();
+    if (*destination_ptr == *accumulator_register)
+    {
+        *destination_ptr = new_value;
+        END_ATOMIC();
+        // EFLAGS is the register to hold cpu status.
+        // ZF (zero flag) is the bit used mostly in comparison instructions
+        EFLAGS_REGISTER.ZF = 1; 
+    }
+    else
+    {
+        *accumulator_register = *destination_ptr;
+        END_ATOMIC();
+        EFLAGS_REGISTER.ZF = 0; 
+    }
+}
+```
+- LL/SC (load-linked/store-conditional) = It is separation of 2 instruction, `ll` loads memory and toggle the state of the memory address, `sc` stores value to new the address as long as there was no change from the `ll`.
+
+Both operations des not appear on the same processor since they are just different implementations the same ideal. LL/SC follow RISC methodology, while CAS follows CISC methodology.
