@@ -12,7 +12,7 @@ List of all the things I need to write about:
 - reorder
   - [x] consistency models
   - [ ] hardware model
-- [ ] atomics
+- [x] atomics
 - [ ] vector instruction
 - [ ] big.LITTLE
 
