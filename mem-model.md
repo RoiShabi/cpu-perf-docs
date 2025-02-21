@@ -81,8 +81,10 @@ void PrintTriangleThread()
 
 int main()
 {
-    thread(PrintTriangleThread);
-    thread(GenerateObjectThread);
+    jthread t1(PrintTriangleThread);
+    jthread t2(GenerateObjectThread);
+    t1.join();
+    t2.join();
 }
 ```
 In the folloing example, the intuitive result is, `PrintTriangleThread()` waits until `is_ready` is true, and then prints the triangle which is already filled. It reality, this may not be the result. The order of execution can alter in a way that `PrintTriangleThread()` prints the Triangle before checking the flag, or `GenerateObjectThread()` sets the flag before writing data to the `global_triangle`. As long as one of the alterations occur, the result would be invalid object printed to the screen.
@@ -126,8 +128,10 @@ void PrintTriangleThread()
 
 int main()
 {
-    thread(PrintTriangleThread);
-    thread(GenerateObjectThread);
+    jthread t1(PrintTriangleThread);
+    jthread t2(GenerateObjectThread);
+    t1.join();
+    t2.join();
 }
 ```
 
