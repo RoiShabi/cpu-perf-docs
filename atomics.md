@@ -1,15 +1,15 @@
 # cpu-perf-docs
 **Read Previous: [Memory Models](./mem-model.md)**
 ## Atomics
-Atomic Operations, also known as 'atomics', are operations which were born for the purpose of threads' communication. Atomcis provide decisive (find better word) memory accesses in order to keep the code's functionality the same as the programmer intended. In order to do so, atomics harness 3 mechanisms: cache coherency, memory ordering directives, atomic instructions. In order to understand how does it work, we first need to understand the missing part we have not talked about yet - atomic instructions.
+Atomic Operations, also known as 'atomics', are operations which were born for the purpose of threads' communication. Atomics provide transactional memory accesses in order to keep the code's functionality the same as the programmer intended. In order to do so, atomics harness 3 mechanisms: cache coherency, memory ordering directives, atomic instructions. For understanding how it works, we first need to understand the missing part we have not talked about yet - atomic instructions.
 
 ### Atomic Instructions
 #### Atomic Instructions - Why?
 We are already familiar with some CPU instructions, like load & store, add, xor. A race condition might occur when using them to communicate between threads. In the following 2 examples we are going to see real world scenarios where threads may corrupt each other by racing on the same resource.
-> In the examples, we use OOS instruction to describe instruction Out Of Scope instruction/value, meaning the code is before, or after, the scope of the assembly
+> In the examples, we use OOS instruction to describe Out Of Scope instruction/value, meaning the code is before, or after, the scope of the assembly
 
 ##### Example 1
-In the next example, 2 threads are going to run the `print_until_limit()` method. The expected result is, 2 threads print the string for total amount of `limit' lines
+In the next example, 2 threads are going to run the `print_until_limit()` method. The expected result: 2 threads print the string for total amount of `limit' lines.
 ```C++
 int global_counter = 0;
 const int limit = 50;
@@ -36,7 +36,7 @@ This code results unexpected behavior. That is, because of two reasons:
 1. The access of `global_counter` in the the while loop -> The expectation of `global_counter` to be the same from the loop to the incrementation line 
 2. The line `++global_counter` -> It is translated to 3 instruction - load, add, store
 
-The issue is, since both threads accessing `global_counter` resource without synchronization, one can depend on value which is not updated. Lets simulate a scenario:
+The issue is, since both threads accessing `global_counter` resource without synchronization, one can depend on an outdated value. Lets simulate a scenario:
 |Timepoint|Thread1 Instruction|Thread1 t0(register)|Thread2 Instruction|Thread2 t0(register)|global_counter|
 |--|--|--|--|--|--|
 |0|ld t0 `global_counter`|OOS (uinitialized)|OOS (not loaded yet)|OOS (uinitialized)|0|
@@ -45,7 +45,7 @@ The issue is, since both threads accessing `global_counter` resource without syn
 |3|OOS (between iterations)|1|sw t0 `global_counter`|1|1|
 |4|OOS (between iterations)|1|OOS (between iterations)|1|1|
 
-As can be seen, even after 2 threads increased `global_counter` by 1, it's value is not 2, but only 1.
+As can be seen, even after the 2 threads increased `global_counter` by 1, it's value is not 2, but only 1.
 
 ##### Example 2
 The next example shows a scenario of writing strings to custom monitor. `hardware_custom_print(std::string*, int)` method writes to the monitor, but the writing is not thread safe, so we create single thread to call the method. Another 2 threads prepare data to print, and write it to a shared strings-array. In order to protect the 2 threads from writing at the same time to the array, we use synchronization flag which every thread acquire before writing to the array.
@@ -59,7 +59,6 @@ std::string print_buffer[SIZE];
 bool is_buffer_locked = false;
 size_t next_free_index = 0;
 
-// TODO: 2 threads write and one read and print, need for atomic lock-flag
 void insertion_work()
 {
     while(true)
@@ -143,7 +142,7 @@ Atomic instructions are single instructions which does: Read-Modify-Write (RMW).
 ##### Arithmetic & Bitwise RMW
 Some example operations are:
 - `fetch_add` = reads memory, adds a value to that memory and write it back, it also returns the old value. Common in counters.
-- `fetch_xor` = flags, xor as bit toggle TODO: explain
+- `fetch_or` = flags, or as bit toggle, may be used in multiple entities' statuses which are controlled by the same drivers.
 
 ##### Conditional RMW
 Some example operations are:
@@ -171,6 +170,6 @@ void compare_and_swap(int* destination_ptr, int* accumulator_register, int new_v
 ```
 - LL/SC (load-linked/store-conditional) = It is separation of 2 instruction, `ll` loads memory and toggle the state of the memory address, `sc` stores value to new the address as long as there was no change from the `ll`.
 
-Both operations des not appear on the same processor since they are just different implementations the same ideal. LL/SC follow RISC methodology, while CAS follows CISC methodology.
+The 2 operations do not appear both on one processor since they are just different implementations the same ideal. LL/SC follow RISC methodology, while CAS follows CISC methodology.
 
 **Read Next: [Compare Exchange operations](./atomic-compare-exchange.md)**
