@@ -3,8 +3,7 @@
 
 ## simd table content
 
-- What is simd
-- SWAR
+- Array Processing (extend)
 - When to, When not to
 - The raise of GPU
 - compare vendor support avx512 vs apple vs amd vs arm&risc
