@@ -139,3 +139,22 @@ This loop runs 124,378 iterations, with additional 6 iterations of the last loop
 > Good to know: this method also have vectorized (classical SIMD) implementation, and for 256bit register the improvement was 27.9 times faster.
 
 ##### Explain the lookup hack
+
+Lets explain why the arithmetics of `(chunk - 0x01010101 01010101) & ~chunk & 0x80808080 80808080` tells us if there is a 0 byte inside. We will start looking at each byte separately and see what makes `0x00` char a unique one for this formula:
+* `0x00` - `0x01` = `0xFF`
+* NOT(`0x00`) = `0xFF`
+* AND(`0xFF`, `0xFF`) = `0xFF`
+* `0xFF` & `0x80` = `0b 1111 1111` & `0b 1000 0000` = `0b 1000 0000`
+
+We can see that as long as the high bit (most significant one) is `ON`, the result is not `0x00`. Now we shall test it against other values (in binary to look for the patterns):
+* `0b 1111 1111` - `0b 0000 0001` = `0b 1111 1110`
+* NOT(`0b 1111 1111`) = `0b 0000 0000` **(not passing bit mask)**
+
+* `0b 0101 0101` - `0b 0000 0001` = `0b 0101 0100`  **(not passing bit mask)**
+* NOT(`0b 0101 0101`) = `0b 1010 1010`
+
+We can see that our number should follow the next rules:
+1. The **original input** must have `0` bit value in the most significant bit in order to pass the NOT instruction with `1` bit value.
+2. The **original input** must higher than `0b 1000 0001` for us to subtract it by 1 and still have `1` as the high-bit.
+
+Those rules contradict with each other, but the second rule has a special case which is `0b 0000 0000`. The reason is, that subtract it by 1 introduces an underflow, with the result of `0b 1111 1111`. That is why, the formula from earlier returns a number other than 0 only for input having `0x00` byte in it.
