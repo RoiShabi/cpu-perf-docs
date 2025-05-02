@@ -3,7 +3,7 @@
 
 ## simd table content
 
-- Array Processing (extend)
+- Array Processing (extend) [TODO: Still in progress!!]
 - When to, When not to
 - The raise of GPU
 - compare vendor support avx512 vs apple vs amd vs arm&risc
@@ -77,6 +77,80 @@ For an environment where the processor's ALU is the bottleneck, the SIMD approac
 ### Array Processing
 
 Array processing is a subset of SIMD, where each operation cover multiple elements (commonly known as vector), similar to the previous example. It uses dedicated vector registers and vector instructions to perform operations on multiple data elements simultaneously (128 bits, 256 and even 512).
+
+#### Example - Mem Copy
+We are going to see an implementation of memcpy, which works by taking advantage of the 'move' instruction.
+```C
+void move_based_copy(char* dst, char* src, size_t size_in_bytes) {
+    // Ensure proper alignment to uint64_t (8-byte boundary)
+    size_t offset = (uintptr_t)src % sizeof(uint64_t); // Find misalignment
+    size_t leading_bytes = offset ? sizeof(uint64_t) - offset : 0;
+    leading_bytes = (leading_bytes > size_in_bytes) ? size_in_bytes : leading_bytes;
+
+    // Copy leading unaligned bytes
+    for (size_t i = 0; i < leading_bytes; i++) {
+        dst[i] = src[i];
+    }
+
+    // Advance pointers
+    size_t aligned_start = leading_bytes;
+    size_t aligned_bytes = (size_in_bytes - leading_bytes) / sizeof(uint64_t);
+    size_t leftover_bytes = (size_in_bytes - leading_bytes) % sizeof(uint64_t);
+
+    uint64_t* dst64 = (uint64_t*)(dst + aligned_start);
+    uint64_t* src64 = (uint64_t*)(src + aligned_start);
+
+    // Copy aligned 8-byte chunks
+    for (size_t i = 0; i < aligned_bytes; i++) {
+        dst64[i] = src64[i];
+    }
+
+    // Copy remaining leftover bytes
+    char* leftover_dst = (char*)&dst64[aligned_bytes];
+    char* leftover_src = (char*)&src64[aligned_bytes];
+
+    for (size_t i = 0; i < leftover_bytes; i++) {
+        leftover_dst[i] = leftover_src[i];
+    }
+}
+```
+
+Vectorized implementation will not copy the data in chunks of 8 bytes, but bigger ones. Lets see an implementation based on 256bit operations for Intel x86 processor:
+```C
+void move_based_copy(char* dst, char* src, size_t size_in_bytes) {
+    // Ensure proper alignment to uint64_t (8-byte boundary)
+    size_t offset = (uintptr_t)src % sizeof(uint64_t); // Find misalignment
+    size_t leading_bytes = offset ? sizeof(uint64_t) - offset : 0;
+    leading_bytes = (leading_bytes > size_in_bytes) ? size_in_bytes : leading_bytes;
+
+    // Copy leading unaligned bytes
+    for (size_t i = 0; i < leading_bytes; i++) {
+        dst[i] = src[i];
+    }
+
+    // Advance pointers
+    size_t aligned_start = leading_bytes;
+    size_t aligned_bytes = (size_in_bytes - leading_bytes) / sizeof(uint64_t);
+    size_t leftover_bytes = (size_in_bytes - leading_bytes) % sizeof(uint64_t);
+
+    uint64_t* dst64 = (uint64_t*)(dst + aligned_start);
+    uint64_t* src64 = (uint64_t*)(src + aligned_start);
+
+    // Copy aligned 8-byte chunks
+    for (size_t i = 0; i < aligned_bytes; i++) {
+        dst64[i] = src64[i];
+    }
+
+    // Copy remaining leftover bytes
+    char* leftover_dst = (char*)&dst64[aligned_bytes];
+    char* leftover_src = (char*)&src64[aligned_bytes];
+
+    for (size_t i = 0; i < leftover_bytes; i++) {
+        leftover_dst[i] = leftover_src[i];
+    }
+}
+```
+For benchmark of copy on 1MB arrays, the improvment 
 
 ### SWAT
 
